@@ -3,10 +3,24 @@ import {
   Binary,
   Fingerprint,
   Palette,
+  Database,
+  FileCode2,
+  Link2,
+  Ampersand,
+  Type,
+  KeyRound,
+  Blend,
+  GitCompare,
+  CaseSensitive,
   type LucideIcon,
 } from "lucide-react";
 
-export type ToolCategoryId = "formatters" | "encoders" | "generators" | "colors";
+export type ToolCategoryId =
+  | "formatters"
+  | "encoders"
+  | "generators"
+  | "colors"
+  | "text";
 
 export interface ToolCategory {
   id: ToolCategoryId;
@@ -24,6 +38,10 @@ export interface Tool {
   href: string;
   /** Search keywords beyond name/description, used by the command palette. */
   keywords?: string[];
+  /** Surfaced with a "Popular" badge on the homepage. */
+  popular?: boolean;
+  /** Listed in the catalog (mega-menu, homepage) but not yet built. */
+  comingSoon?: boolean;
 }
 
 export const toolCategories: ToolCategory[] = [
@@ -51,6 +69,12 @@ export const toolCategories: ToolCategory[] = [
     description: "Inspect, convert, and preview colors.",
     icon: Palette,
   },
+  {
+    id: "text",
+    name: "Text",
+    description: "Compare, transform, and clean up text.",
+    icon: Type,
+  },
 ];
 
 export const tools: Tool[] = [
@@ -62,6 +86,25 @@ export const tools: Tool[] = [
     category: "formatters",
     href: "/tools/json-formatter",
     keywords: ["json", "beautify", "minify", "validate", "pretty print"],
+    popular: true,
+  },
+  {
+    id: "xml-formatter",
+    name: "XML Formatter",
+    description: "Format and validate XML documents.",
+    icon: FileCode2,
+    category: "formatters",
+    href: "/tools/xml-formatter",
+    comingSoon: true,
+  },
+  {
+    id: "sql-formatter",
+    name: "SQL Formatter",
+    description: "Beautify SQL queries with consistent indentation.",
+    icon: Database,
+    category: "formatters",
+    href: "/tools/sql-formatter",
+    comingSoon: true,
   },
   {
     id: "base64-encoder",
@@ -73,6 +116,24 @@ export const tools: Tool[] = [
     keywords: ["base64", "encode", "decode"],
   },
   {
+    id: "url-encoder",
+    name: "URL Encoder",
+    description: "Encode special characters for URLs or decode them back.",
+    icon: Link2,
+    category: "encoders",
+    href: "/tools/url-encoder",
+    comingSoon: true,
+  },
+  {
+    id: "html-entities",
+    name: "HTML Entities",
+    description: "Encode and decode HTML entity characters.",
+    icon: Ampersand,
+    category: "encoders",
+    href: "/tools/html-entities",
+    comingSoon: true,
+  },
+  {
     id: "uuid-generator",
     name: "UUID Generator",
     description: "Generate v4 UUIDs in bulk.",
@@ -82,6 +143,24 @@ export const tools: Tool[] = [
     keywords: ["uuid", "guid", "id", "generate"],
   },
   {
+    id: "lorem-ipsum",
+    name: "Lorem Ipsum",
+    description: "Generate placeholder text, paragraphs, or words.",
+    icon: Type,
+    category: "generators",
+    href: "/tools/lorem-ipsum",
+    comingSoon: true,
+  },
+  {
+    id: "password-generator",
+    name: "Password Generator",
+    description: "Generate strong, random passwords.",
+    icon: KeyRound,
+    category: "generators",
+    href: "/tools/password-generator",
+    comingSoon: true,
+  },
+  {
     id: "color-converter",
     name: "Color Converter",
     description: "Convert between HEX, RGB, and HSL color formats.",
@@ -89,6 +168,33 @@ export const tools: Tool[] = [
     category: "colors",
     href: "/tools/color-converter",
     keywords: ["color", "hex", "rgb", "hsl", "convert"],
+  },
+  {
+    id: "gradient-generator",
+    name: "Gradient Generator",
+    description: "Design and preview CSS gradients.",
+    icon: Blend,
+    category: "colors",
+    href: "/tools/gradient-generator",
+    comingSoon: true,
+  },
+  {
+    id: "text-diff",
+    name: "Text Diff",
+    description: "Compare two texts side by side.",
+    icon: GitCompare,
+    category: "text",
+    href: "/tools/text-diff",
+    comingSoon: true,
+  },
+  {
+    id: "case-converter",
+    name: "Case Converter",
+    description: "Convert text between case styles.",
+    icon: CaseSensitive,
+    category: "text",
+    href: "/tools/case-converter",
+    comingSoon: true,
   },
 ];
 

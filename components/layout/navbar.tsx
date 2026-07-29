@@ -2,91 +2,113 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ChevronRight, Menu, Search } from "lucide-react";
+import { LayoutGrid, ChevronDown, Menu, Search, Star, Wrench } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { SidebarNav } from "@/components/layout/sidebar-nav";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { MegaMenu } from "@/components/layout/mega-menu";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { getCategoryById, tools } from "@/lib/tools-registry";
+import { getToolById } from "@/lib/tools-registry";
+import { useToolsStore } from "@/lib/store/use-tools-store";
+
+const MAX_PINNED = 2;
 
 interface NavbarProps {
   onSearchClick: () => void;
 }
 
 export function Navbar({ onSearchClick }: NavbarProps) {
-  const pathname = usePathname();
+  const [toolsOpen, setToolsOpen] = React.useState(false);
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
-  const breadcrumbs = getBreadcrumbs(pathname);
+  const favoriteIds = useToolsStore((state) => state.favoriteIds);
   const isMac =
     typeof navigator !== "undefined" && /Mac/.test(navigator.platform);
 
+  const pinnedTools = favoriteIds
+    .map((id) => getToolById(id))
+    .filter((tool): tool is NonNullable<typeof tool> => tool !== undefined)
+    .filter((tool) => !tool.comingSoon)
+    .slice(0, MAX_PINNED);
+
   return (
-    <header className="bg-background sticky top-0 z-40 flex h-14 items-center gap-2 border-b px-3">
+    <header className="bg-background sticky top-0 z-40 flex h-16 items-center gap-3 border-b px-4 sm:px-6">
+      <Link href="/" className="flex shrink-0 items-center gap-2">
+        <span className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-lg">
+          <Wrench className="size-3.5" />
+        </span>
+        <span className="text-[15px] font-bold tracking-tight">DevTools</span>
+      </Link>
+
+      <Popover open={toolsOpen} onOpenChange={setToolsOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden gap-1.5 font-semibold sm:inline-flex"
+          >
+            <LayoutGrid className="text-primary size-3.5" />
+            All Tools
+            <ChevronDown className="text-muted-foreground size-3.5" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="start">
+          <MegaMenu onNavigate={() => setToolsOpen(false)} />
+        </PopoverContent>
+      </Popover>
+
+      {pinnedTools.length > 0 && (
+        <>
+          <div className="bg-border hidden h-5 w-px sm:block" />
+          <div className="hidden items-center gap-1 sm:flex">
+            <span className="text-muted-foreground mr-1 text-[10px] font-semibold tracking-wide uppercase">
+              Pinned
+            </span>
+            {pinnedTools.map((tool) => (
+              <Link
+                key={tool.id}
+                href={tool.href}
+                className="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[12.5px] font-medium"
+              >
+                <tool.icon className="text-primary size-3.5" />
+                {tool.name}
+                <Star className="text-primary size-2.5 fill-current" />
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className="sm:hidden"
+        aria-label="Open navigation"
+        onClick={() => setMobileNavOpen(true)}
+      >
+        <Menu />
+      </Button>
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-        <SheetContent side="left" className="w-72 p-0">
+        <SheetContent side="left" className="w-80 p-0">
           <SheetHeader className="border-b">
             <SheetTitle>DevTools</SheetTitle>
           </SheetHeader>
-          <SidebarNav onNavigate={() => setMobileNavOpen(false)} />
+          <MobileNav onNavigate={() => setMobileNavOpen(false)} />
         </SheetContent>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          aria-label="Open navigation"
-          onClick={() => setMobileNavOpen(true)}
-        >
-          <Menu />
-        </Button>
       </Sheet>
-
-      <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1 text-sm">
-        {breadcrumbs.map((crumb, index) => (
-          <React.Fragment key={`${crumb.href ?? crumb.label}-${index}`}>
-            {index > 0 && (
-              <ChevronRight className="text-muted-foreground size-3.5 shrink-0" />
-            )}
-            {index === breadcrumbs.length - 1 || !crumb.href ? (
-              <span
-                className={cn(
-                  "truncate",
-                  index === breadcrumbs.length - 1
-                    ? "font-medium"
-                    : "text-muted-foreground"
-                )}
-              >
-                {crumb.label}
-              </span>
-            ) : (
-              <Link
-                href={crumb.href}
-                className="text-muted-foreground hover:text-foreground truncate"
-              >
-                {crumb.label}
-              </Link>
-            )}
-          </React.Fragment>
-        ))}
-      </nav>
 
       <div className="ml-auto flex items-center gap-2">
         <Button
           variant="outline"
           size="sm"
           onClick={onSearchClick}
-          className="text-muted-foreground w-40 justify-between font-normal sm:w-56"
+          className="text-muted-foreground w-36 justify-between font-normal sm:w-56"
         >
           <span className="flex items-center gap-2">
             <Search className="size-4" />
-            Search tools...
+            <span className="hidden sm:inline">Search tools...</span>
+            <span className="sm:hidden">Search</span>
           </span>
           <kbd className="bg-muted text-muted-foreground pointer-events-none hidden h-5 items-center gap-0.5 rounded border px-1.5 font-mono text-[10px] font-medium sm:flex">
             {isMac ? "⌘" : "Ctrl"}K
@@ -96,25 +118,4 @@ export function Navbar({ onSearchClick }: NavbarProps) {
       </div>
     </header>
   );
-}
-
-interface Breadcrumb {
-  href: string | null;
-  label: string;
-}
-
-function getBreadcrumbs(pathname: string): Breadcrumb[] {
-  const crumbs: Breadcrumb[] = [{ href: "/", label: "Home" }];
-
-  const tool = tools.find((t) => t.href === pathname);
-  if (!tool) return crumbs;
-
-  const category = getCategoryById(tool.category);
-  if (category) {
-    // No dedicated category route yet, so this crumb is a label only.
-    crumbs.push({ href: null, label: category.name });
-  }
-  crumbs.push({ href: tool.href, label: tool.name });
-
-  return crumbs;
 }

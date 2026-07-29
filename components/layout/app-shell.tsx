@@ -2,12 +2,10 @@
 
 import * as React from "react";
 
-import { Sidebar } from "@/components/layout/sidebar";
 import { Navbar } from "@/components/layout/navbar";
 import { CommandPalette } from "@/components/layout/command-palette";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const [collapsed, setCollapsed] = React.useState(false);
   const [commandOpen, setCommandOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -23,12 +21,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <Navbar onSearchClick={() => setCommandOpen(true)} />
-        <main className="flex flex-1 flex-col">{children}</main>
-      </div>
+    <div className="flex min-h-screen flex-col">
+      <Navbar onSearchClick={() => setCommandOpen(true)} />
+      <main className="flex flex-1 flex-col">{children}</main>
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
     </div>
   );

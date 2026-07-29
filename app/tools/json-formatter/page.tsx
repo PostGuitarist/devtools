@@ -74,7 +74,7 @@ export default function JsonFormatterPage() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        <div className="min-h-[400px] flex-1 overflow-hidden rounded-md border">
+        <div className="h-[560px] overflow-hidden rounded-md border">
           <Editor
             language="json"
             value={code}

@@ -29,11 +29,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const favoriteTools = favoriteIds
     .map((id) => getToolById(id))
-    .filter((tool) => tool !== undefined);
+    .filter((tool): tool is NonNullable<typeof tool> => tool !== undefined)
+    .filter((tool) => !tool.comingSoon);
 
   const recentTools = recentIds
     .map((id) => getToolById(id))
-    .filter((tool) => tool !== undefined);
+    .filter((tool): tool is NonNullable<typeof tool> => tool !== undefined)
+    .filter((tool) => !tool.comingSoon);
 
   const runTool = React.useCallback(
     (href: string, toolId: string) => {
@@ -66,7 +68,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 >
                   <tool.icon />
                   <span>{tool.name}</span>
-                  <Star className="ml-auto size-3.5 fill-current" />
+                  <Star className="text-primary ml-auto size-3.5 fill-current" />
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -104,10 +106,16 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 <CommandItem
                   key={tool.id}
                   value={`${tool.name} ${tool.keywords?.join(" ") ?? ""}`}
-                  onSelect={() => runTool(tool.href, tool.id)}
+                  disabled={tool.comingSoon}
+                  onSelect={() => !tool.comingSoon && runTool(tool.href, tool.id)}
                 >
                   <tool.icon />
                   <span>{tool.name}</span>
+                  {tool.comingSoon && (
+                    <span className="text-muted-foreground ml-auto text-[10px] font-bold tracking-wide">
+                      SOON
+                    </span>
+                  )}
                 </CommandItem>
               ))}
             </CommandGroup>
