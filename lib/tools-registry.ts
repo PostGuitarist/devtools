@@ -95,7 +95,7 @@ export const tools: Tool[] = [
     icon: FileCode2,
     category: "formatters",
     href: "/tools/xml-formatter",
-    comingSoon: true,
+    keywords: ["xml", "format", "validate", "pretty print"],
   },
   {
     id: "sql-formatter",
@@ -104,7 +104,7 @@ export const tools: Tool[] = [
     icon: Database,
     category: "formatters",
     href: "/tools/sql-formatter",
-    comingSoon: true,
+    keywords: ["sql", "query", "format", "mysql", "postgres"],
   },
   {
     id: "base64-encoder",
@@ -122,7 +122,7 @@ export const tools: Tool[] = [
     icon: Link2,
     category: "encoders",
     href: "/tools/url-encoder",
-    comingSoon: true,
+    keywords: ["url", "uri", "encode", "decode", "percent"],
   },
   {
     id: "html-entities",
@@ -131,7 +131,7 @@ export const tools: Tool[] = [
     icon: Ampersand,
     category: "encoders",
     href: "/tools/html-entities",
-    comingSoon: true,
+    keywords: ["html", "entities", "escape", "unescape"],
   },
   {
     id: "uuid-generator",
@@ -149,7 +149,7 @@ export const tools: Tool[] = [
     icon: Type,
     category: "generators",
     href: "/tools/lorem-ipsum",
-    comingSoon: true,
+    keywords: ["lorem ipsum", "placeholder", "dummy text"],
   },
   {
     id: "password-generator",
@@ -158,7 +158,7 @@ export const tools: Tool[] = [
     icon: KeyRound,
     category: "generators",
     href: "/tools/password-generator",
-    comingSoon: true,
+    keywords: ["password", "generate", "random", "secure"],
   },
   {
     id: "color-converter",
@@ -176,7 +176,7 @@ export const tools: Tool[] = [
     icon: Blend,
     category: "colors",
     href: "/tools/gradient-generator",
-    comingSoon: true,
+    keywords: ["gradient", "css", "linear", "radial"],
   },
   {
     id: "text-diff",
@@ -185,7 +185,7 @@ export const tools: Tool[] = [
     icon: GitCompare,
     category: "text",
     href: "/tools/text-diff",
-    comingSoon: true,
+    keywords: ["diff", "compare", "text", "changes"],
   },
   {
     id: "case-converter",
@@ -194,7 +194,7 @@ export const tools: Tool[] = [
     icon: CaseSensitive,
     category: "text",
     href: "/tools/case-converter",
-    comingSoon: true,
+    keywords: ["case", "camelcase", "snake_case", "kebab-case", "title case"],
   },
 ];
 
