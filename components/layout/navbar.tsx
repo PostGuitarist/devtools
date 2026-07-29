@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Menu, Search } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -49,12 +50,21 @@ export function Navbar({ onSearchClick }: NavbarProps) {
 
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1 text-sm">
         {breadcrumbs.map((crumb, index) => (
-          <React.Fragment key={crumb.href}>
+          <React.Fragment key={`${crumb.href ?? crumb.label}-${index}`}>
             {index > 0 && (
               <ChevronRight className="text-muted-foreground size-3.5 shrink-0" />
             )}
-            {index === breadcrumbs.length - 1 ? (
-              <span className="truncate font-medium">{crumb.label}</span>
+            {index === breadcrumbs.length - 1 || !crumb.href ? (
+              <span
+                className={cn(
+                  "truncate",
+                  index === breadcrumbs.length - 1
+                    ? "font-medium"
+                    : "text-muted-foreground"
+                )}
+              >
+                {crumb.label}
+              </span>
             ) : (
               <Link
                 href={crumb.href}
@@ -89,7 +99,7 @@ export function Navbar({ onSearchClick }: NavbarProps) {
 }
 
 interface Breadcrumb {
-  href: string;
+  href: string | null;
   label: string;
 }
 
@@ -101,7 +111,8 @@ function getBreadcrumbs(pathname: string): Breadcrumb[] {
 
   const category = getCategoryById(tool.category);
   if (category) {
-    crumbs.push({ href: "/", label: category.name });
+    // No dedicated category route yet, so this crumb is a label only.
+    crumbs.push({ href: null, label: category.name });
   }
   crumbs.push({ href: tool.href, label: tool.name });
 
