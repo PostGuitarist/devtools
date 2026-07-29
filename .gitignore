@@ -20,6 +20,9 @@
 # production
 /build
 
+# monaco-editor assets, copied from node_modules by scripts/copy-monaco-assets.mjs
+/public/vs
+
 # misc
 .DS_Store
 *.pem

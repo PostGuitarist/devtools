@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored monaco-editor assets, copied by scripts/copy-monaco-assets.mjs
+    "public/vs/**",
   ]),
 ]);
 
