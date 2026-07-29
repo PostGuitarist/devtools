@@ -64,7 +64,7 @@ export function ToolLayout({
                 <Star
                   className={cn(
                     "size-4",
-                    isFavorite && "fill-amber-500 text-amber-500"
+                    isFavorite && "text-primary fill-current"
                   )}
                 />
               </Button>
