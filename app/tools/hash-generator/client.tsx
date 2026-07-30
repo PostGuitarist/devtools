@@ -95,26 +95,6 @@ export default function HashGeneratorPage() {
           }}
         />
 
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="hash-input">
-              Text{fileName ? ` (using file: ${fileName})` : ""}
-            </Label>
-            <label className="text-muted-foreground hover:text-foreground flex cursor-pointer items-center gap-1.5 text-xs font-medium">
-              <Upload className="size-3.5" />
-              Hash a file instead
-              <input type="file" className="sr-only" onChange={handleFileChange} />
-            </label>
-          </div>
-          <Textarea
-            id="hash-input"
-            value={text}
-            onChange={(event) => handleTextChange(event.target.value)}
-            placeholder="Type or paste text to hash..."
-            className="min-h-[200px] font-mono text-sm"
-          />
-        </div>
-
         {error && (
           <Alert variant="destructive">
             <TriangleAlert />
@@ -122,18 +102,40 @@ export default function HashGeneratorPage() {
           </Alert>
         )}
 
-        <div className="flex flex-col gap-3">
-          {HASH_ALGORITHMS.map((algo) => (
-            <div key={algo} className="flex flex-col gap-2">
-              <Label>{algo}</Label>
-              <div className="border-input flex items-center justify-between rounded-md border px-3 py-2">
-                <span className="truncate font-mono text-sm">
-                  {digests?.[algo] ?? "—"}
-                </span>
-                <CopyButton value={digests?.[algo] ?? ""} label={`Copy ${algo}`} />
-              </div>
+        <div className="grid flex-1 grid-cols-1 gap-8 lg:grid-cols-2">
+          <div className="flex flex-1 flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="hash-input">
+                Text{fileName ? ` (using file: ${fileName})` : ""}
+              </Label>
+              <label className="text-muted-foreground hover:text-foreground flex cursor-pointer items-center gap-1.5 text-xs font-medium">
+                <Upload className="size-3.5" />
+                Hash a file instead
+                <input type="file" className="sr-only" onChange={handleFileChange} />
+              </label>
             </div>
-          ))}
+            <Textarea
+              id="hash-input"
+              value={text}
+              onChange={(event) => handleTextChange(event.target.value)}
+              placeholder="Type or paste text to hash..."
+              className="min-h-[280px] flex-1 font-mono text-sm"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:sticky lg:top-6 lg:self-start">
+            {HASH_ALGORITHMS.map((algo) => (
+              <div key={algo} className="flex flex-col gap-2">
+                <Label>{algo}</Label>
+                <div className="border-input flex items-center justify-between rounded-md border px-3 py-2">
+                  <span className="truncate font-mono text-sm">
+                    {digests?.[algo] ?? "—"}
+                  </span>
+                  <CopyButton value={digests?.[algo] ?? ""} label={`Copy ${algo}`} />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </ToolLayout>

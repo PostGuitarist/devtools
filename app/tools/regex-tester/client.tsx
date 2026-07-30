@@ -109,35 +109,37 @@ export default function RegexTesterPage() {
           </Alert>
         )}
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="sample-text">Sample text</Label>
-          <Textarea
-            id="sample-text"
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            placeholder="Paste sample text to test against..."
-            className="min-h-[160px] font-mono text-sm"
-          />
-        </div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="sample-text">Sample text</Label>
+            <Textarea
+              id="sample-text"
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              placeholder="Paste sample text to test against..."
+              className="min-h-[200px] font-mono text-sm"
+            />
+          </div>
 
-        <div className="flex flex-col gap-2">
-          <Label>Highlighted matches ({matches.length})</Label>
-          <div className="border-input min-h-[100px] rounded-md border px-3 py-2 font-mono text-sm break-words whitespace-pre-wrap">
-            {text === "" ? (
-              <span className="text-muted-foreground">
-                Matches will be highlighted here.
-              </span>
-            ) : (
-              segments.map((segment, i) =>
-                segment.matched ? (
-                  <mark key={i} className="bg-primary/30 text-foreground rounded-sm">
-                    {segment.text}
-                  </mark>
-                ) : (
-                  <React.Fragment key={i}>{segment.text}</React.Fragment>
+          <div className="flex flex-col gap-2">
+            <Label>Highlighted matches ({matches.length})</Label>
+            <div className="border-input min-h-[200px] rounded-md border px-3 py-2 font-mono text-sm break-words whitespace-pre-wrap">
+              {text === "" ? (
+                <span className="text-muted-foreground">
+                  Matches will be highlighted here.
+                </span>
+              ) : (
+                segments.map((segment, i) =>
+                  segment.matched ? (
+                    <mark key={i} className="bg-primary/30 text-foreground rounded-sm">
+                      {segment.text}
+                    </mark>
+                  ) : (
+                    <React.Fragment key={i}>{segment.text}</React.Fragment>
+                  )
                 )
-              )
-            )}
+              )}
+            </div>
           </div>
         </div>
 
