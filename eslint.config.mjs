@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Vendored monaco-editor assets, copied by scripts/copy-monaco-assets.mjs
     "public/vs/**",
+    // Runs in the ServiceWorker global scope, not the app's TS/React setup.
+    "public/sw.js",
   ]),
 ]);
 

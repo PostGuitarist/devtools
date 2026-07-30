@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "generate:icons": "node scripts/generate-icons.mjs",
     "postinstall": "node scripts/copy-monaco-assets.mjs"
   },
   "dependencies": {
@@ -56,6 +57,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
     "jsdom": "^30.0.1",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.10"
