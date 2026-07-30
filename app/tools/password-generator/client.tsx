@@ -116,7 +116,7 @@ export default function PasswordGeneratorPage() {
           </div>
         </div>
 
-        <div className="grid max-w-xl grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div className="col-span-full flex flex-col gap-2">
             <Label>Length: {options.length}</Label>
             <Slider

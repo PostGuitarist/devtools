@@ -71,71 +71,77 @@ export default function CronGeneratorClient() {
       <div className="flex flex-1 flex-col gap-6">
         <IncomingTransferBanner toolId="cron-generator" onApply={setExpression} />
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="cron-preset">Presets</Label>
-          <Select value="" onValueChange={(value) => setExpression(value)}>
-            <SelectTrigger id="cron-preset" className="w-72">
-              <SelectValue placeholder="Choose a common schedule..." />
-            </SelectTrigger>
-            <SelectContent>
-              {CRON_PRESETS.map((preset) => (
-                <SelectItem key={preset.expression} value={preset.expression}>
-                  {preset.label} — {preset.expression}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="cron-expression">Cron expression</Label>
-          <div className="flex items-center gap-2">
-            <Input
-              id="cron-expression"
-              value={expression}
-              onChange={(event) => setExpression(event.target.value)}
-              className="max-w-md font-mono"
-            />
-            <CopyButton value={expression} label="Copy expression" />
-          </div>
-        </div>
-
-        <div className="grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-5">
-          {FIELDS.map((field, index) => (
-            <div key={field.label} className="flex flex-col gap-2">
-              <Label htmlFor={`cron-field-${index}`}>{field.label}</Label>
-              <Input
-                id={`cron-field-${index}`}
-                value={parts[index]}
-                onChange={(event) => updatePart(index, event.target.value)}
-                placeholder={field.placeholder}
-                className="font-mono"
-              />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="cron-preset">Presets</Label>
+              <Select value="" onValueChange={(value) => setExpression(value)}>
+                <SelectTrigger id="cron-preset" className="w-full">
+                  <SelectValue placeholder="Choose a common schedule..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {CRON_PRESETS.map((preset) => (
+                    <SelectItem key={preset.expression} value={preset.expression}>
+                      {preset.label} — {preset.expression}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          ))}
-        </div>
 
-        {error ? (
-          <Alert variant="destructive" className="max-w-xl">
-            <TriangleAlert />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        ) : (
-          <p className="text-sm font-medium">{description}</p>
-        )}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="cron-expression">Cron expression</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="cron-expression"
+                  value={expression}
+                  onChange={(event) => setExpression(event.target.value)}
+                  className="font-mono"
+                />
+                <CopyButton value={expression} label="Copy expression" />
+              </div>
+            </div>
 
-        {!error && (
-          <div className="flex flex-col gap-2">
-            <Label>Next 5 executions</Label>
-            <ul className="flex flex-col gap-1 font-mono text-sm">
-              {nextRuns.map((run) => (
-                <li key={run.getTime()} className="border-input rounded-md border px-3 py-1.5">
-                  {run.toLocaleString()}
-                </li>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+              {FIELDS.map((field, index) => (
+                <div key={field.label} className="flex flex-col gap-2">
+                  <Label htmlFor={`cron-field-${index}`}>{field.label}</Label>
+                  <Input
+                    id={`cron-field-${index}`}
+                    value={parts[index]}
+                    onChange={(event) => updatePart(index, event.target.value)}
+                    placeholder={field.placeholder}
+                    className="font-mono"
+                  />
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
-        )}
+
+          <div className="flex flex-col gap-6 lg:sticky lg:top-6 lg:self-start">
+            {error ? (
+              <Alert variant="destructive">
+                <TriangleAlert />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : (
+              <p className="text-sm font-medium">{description}</p>
+            )}
+
+            {!error && (
+              <div className="flex flex-col gap-2">
+                <Label>Next 5 executions</Label>
+                <ul className="flex flex-col gap-1 font-mono text-sm">
+                  {nextRuns.map((run) => (
+                    <li key={run.getTime()} className="border-input rounded-md border px-3 py-1.5">
+                      {run.toLocaleString()}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </ToolLayout>
   );
