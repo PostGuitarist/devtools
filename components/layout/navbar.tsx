@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { LayoutGrid, ChevronDown, Menu, Search, Star, Wrench } from "lucide-react";
+import { History, LayoutGrid, ChevronDown, Menu, Search, Star, Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -99,6 +99,11 @@ export function Navbar({ onSearchClick }: NavbarProps) {
       </Sheet>
 
       <div className="ml-auto flex items-center gap-2">
+        <Button variant="ghost" size="icon" aria-label="History" asChild>
+          <Link href="/history">
+            <History />
+          </Link>
+        </Button>
         <Button
           variant="outline"
           size="sm"
