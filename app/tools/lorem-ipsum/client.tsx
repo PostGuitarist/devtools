@@ -70,12 +70,12 @@ export default function LoremIpsumPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex flex-col gap-2">
-              <Label>Type</Label>
+              <Label htmlFor="lorem-mode">Type</Label>
               <Select
                 value={mode}
                 onValueChange={(value) => handleModeChange(value as Mode)}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger id="lorem-mode" className="w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

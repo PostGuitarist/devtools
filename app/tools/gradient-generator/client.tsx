@@ -68,9 +68,9 @@ export default function GradientGeneratorPage() {
 
         <div className="flex flex-wrap items-end gap-6">
           <div className="flex flex-col gap-2">
-            <Label>Type</Label>
+            <Label htmlFor="gradient-type">Type</Label>
             <Select value={type} onValueChange={(value) => setType(value as GradientType)}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger id="gradient-type" className="w-36">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -112,6 +112,7 @@ export default function GradientGeneratorPage() {
                 <Input
                   value={stop.color}
                   onChange={(event) => updateStopColor(stop.id, event.target.value)}
+                  aria-label="Color stop hex value"
                   className="w-24 font-mono text-sm"
                 />
                 {stops.length > MIN_STOPS && (

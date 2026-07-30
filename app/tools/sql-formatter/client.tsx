@@ -64,7 +64,7 @@ export default function SqlFormatterPage() {
             value={dialect}
             onValueChange={(value) => setDialect(value as SqlLanguage)}
           >
-            <SelectTrigger size="sm" className="w-44">
+            <SelectTrigger size="sm" className="w-44" aria-label="SQL dialect">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

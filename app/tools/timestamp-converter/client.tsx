@@ -119,7 +119,7 @@ export default function TimestampConverterPage() {
                 aria-invalid={epochError ? true : undefined}
               />
               <Select value={epochUnit} onValueChange={(value) => setEpochUnit(value as EpochUnit)}>
-                <SelectTrigger className="w-28">
+                <SelectTrigger className="w-28" aria-label="Epoch unit">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
