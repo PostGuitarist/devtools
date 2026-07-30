@@ -14,7 +14,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { getToolById, toolCategories, tools } from "@/lib/tools-registry";
-import { useToolsStore } from "@/lib/store/use-tools-store";
+import { deriveRecentIds, useToolsStore } from "@/lib/store/use-tools-store";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -24,7 +24,8 @@ interface CommandPaletteProps {
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const router = useRouter();
   const favoriteIds = useToolsStore((state) => state.favoriteIds);
-  const recentIds = useToolsStore((state) => state.getRecentIds());
+  const history = useToolsStore((state) => state.history);
+  const recentIds = React.useMemo(() => deriveRecentIds(history), [history]);
   const addRecent = useToolsStore((state) => state.addRecent);
 
   const favoriteTools = favoriteIds

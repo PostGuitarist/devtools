@@ -32,6 +32,23 @@ interface PersistedStateV0 {
   recentIds?: string[];
 }
 
+/**
+ * Pure so callers (e.g. a Zustand selector) can memoize on `history`'s
+ * reference instead of getting a fresh array every call, which would
+ * otherwise defeat useSyncExternalStore's equality check and loop forever.
+ */
+export function deriveRecentIds(history: HistoryEntry[], limit = 8): string[] {
+  const seen = new Set<string>();
+  const ids: string[] = [];
+  for (const entry of history) {
+    if (seen.has(entry.toolId)) continue;
+    seen.add(entry.toolId);
+    ids.push(entry.toolId);
+    if (ids.length >= limit) break;
+  }
+  return ids;
+}
+
 export const useToolsStore = create<ToolsState>()(
   persist(
     (set, get) => ({
@@ -52,17 +69,7 @@ export const useToolsStore = create<ToolsState>()(
             MAX_HISTORY
           ),
         })),
-      getRecentIds: (limit = 8) => {
-        const seen = new Set<string>();
-        const ids: string[] = [];
-        for (const entry of get().history) {
-          if (seen.has(entry.toolId)) continue;
-          seen.add(entry.toolId);
-          ids.push(entry.toolId);
-          if (ids.length >= limit) break;
-        }
-        return ids;
-      },
+      getRecentIds: (limit = 8) => deriveRecentIds(get().history, limit),
       clearHistory: () => set({ history: [] }),
       setTransfer: (fromToolId, value) =>
         set({ transfer: { fromToolId, value, createdAt: Date.now() } }),
