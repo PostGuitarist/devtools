@@ -16,6 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://devtools.zadenconnell.com"),
   title: "DevTools — Developer Utilities",
   description: "A fast, fully client-side toolkit for everyday developer tasks.",
 };
