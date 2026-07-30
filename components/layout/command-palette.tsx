@@ -24,7 +24,7 @@ interface CommandPaletteProps {
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const router = useRouter();
   const favoriteIds = useToolsStore((state) => state.favoriteIds);
-  const recentIds = useToolsStore((state) => state.recentIds);
+  const recentIds = useToolsStore((state) => state.getRecentIds());
   const addRecent = useToolsStore((state) => state.addRecent);
 
   const favoriteTools = favoriteIds

@@ -12,6 +12,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToolsStore } from "@/lib/store/use-tools-store";
+import { ShareButton } from "@/components/tools/share-button";
+import { SendToMenu } from "@/components/tools/send-to-menu";
 
 interface ToolLayoutProps {
   toolId: string;
@@ -23,6 +25,10 @@ interface ToolLayoutProps {
   onCopy?: () => void;
   /** Downloads the tool's primary output as a file. Omit to hide the Download action. */
   onDownload?: () => void;
+  /** Current tool state to encode into a share link. Omit to hide the Share action. */
+  shareState?: unknown;
+  /** Value other tools can receive via "Send to...". Omit to hide that action. */
+  sendValue?: string;
   /** Extra actions rendered before the standard action bar. */
   actions?: React.ReactNode;
   children: React.ReactNode;
@@ -36,6 +42,8 @@ export function ToolLayout({
   onClear,
   onCopy,
   onDownload,
+  shareState,
+  sendValue,
   actions,
   children,
   className,
@@ -81,6 +89,10 @@ export function ToolLayout({
 
         <div className="flex flex-wrap items-center gap-2">
           {actions}
+          {sendValue !== undefined && (
+            <SendToMenu fromToolId={toolId} value={sendValue} />
+          )}
+          {shareState !== undefined && <ShareButton state={shareState} />}
           {onClear && (
             <Button variant="outline" size="sm" onClick={onClear}>
               <Trash2 />
