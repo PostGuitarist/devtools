@@ -32,6 +32,9 @@ import {
   FileCode,
   Image,
   SwatchBook,
+  FileDiff,
+  Table2,
+  Terminal,
   type LucideIcon,
 } from "lucide-react";
 
@@ -396,6 +399,33 @@ export const tools: Tool[] = [
     category: "colors",
     href: "/tools/tailwind-colors",
     keywords: ["tailwind", "colors", "palette", "css", "swatches"],
+  },
+  {
+    id: "json-diff",
+    name: "JSON Diff",
+    description: "Compare two JSON documents key by key.",
+    icon: FileDiff,
+    category: "formatters",
+    href: "/tools/json-diff",
+    keywords: ["json", "diff", "compare", "changes"],
+  },
+  {
+    id: "mock-data-generator",
+    name: "Mock Data Generator",
+    description: "Generate fake JSON or CSV data from a field schema.",
+    icon: Table2,
+    category: "generators",
+    href: "/tools/mock-data-generator",
+    keywords: ["mock", "fake data", "test data", "seed", "faker"],
+  },
+  {
+    id: "curl-command-builder",
+    name: "curl Command Builder",
+    description: "Build a curl command from method, headers, and body — or paste one to break it apart.",
+    icon: Terminal,
+    category: "generators",
+    href: "/tools/curl-command-builder",
+    keywords: ["curl", "http", "request", "api", "command"],
   },
 ];
 
