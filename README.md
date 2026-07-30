@@ -6,15 +6,19 @@ machine: there's no backend, no API routes, no database, and no accounts.
 
 ## Tools
 
-**Formatters** — JSON, XML, SQL
+**Formatters** — JSON, XML, SQL, JSON to TypeScript, JSON Validator, JSON to
+CSV, YAML ↔ JSON Converter, CSS Minifier & Beautifier, HTML to Markdown
 
-**Encoders** — Base64, URL, HTML Entities, JWT Decoder, Timestamp Converter
+**Encoders** — Base64, URL, HTML Entities, JWT Decoder, Timestamp Converter,
+Number Base Converter, Chmod Calculator, Binary to Text, Image to Base64
 
-**Generators** — UUID, Lorem Ipsum, Password, Hash (MD5/SHA-1/SHA-256/SHA-512)
+**Generators** — UUID, Lorem Ipsum, Password, Hash (MD5/SHA-1/SHA-256/SHA-512),
+QR Code Generator, SVG to PNG, Cron Expression Generator
 
-**Colors** — Color Converter, Gradient Generator
+**Colors** — Color Converter, Gradient Generator, Tailwind Colors
 
-**Text** — Text Diff, Case Converter, Regex Tester
+**Text** — Text Diff, Case Converter, Regex Tester, Word Counter, Markdown
+Preview
 
 ## Platform features
 
@@ -49,6 +53,10 @@ same pattern to the rest of the catalog.
   for every tool's metadata (id, name, description, icon, category,
   keywords). It drives the homepage, the mega-menu, the command palette, the
   sitemap, and per-page SEO metadata simultaneously.
+- **Generated data:** `lib/tailwind-palette-data.ts` (the Tailwind Colors
+  tool's swatch data) is generated from `tailwindcss/theme.css` by
+  `bun run generate:tailwind-palette` — re-run it after a Tailwind upgrade
+  that changes the default palette.
 
 ### Adding a new tool
 
@@ -79,6 +87,6 @@ every pull request and push to `main`.
 ## Roadmap
 
 - Extend share links and tool chaining to the remaining tools.
-- Add more tools (CSV/YAML converters, cron parser, mock data generator).
+- Add more tools (mock data generator, JSON diff, curl command builder).
 - Deeper accessibility coverage (contrast audit tooling in CI, not just a
   point-in-time manual pass).
