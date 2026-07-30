@@ -7,13 +7,21 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CopyButton } from "@/components/tools/copy-button";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { decodeBase64, encodeBase64 } from "@/lib/base64";
+
+interface ShareState {
+  plainText: string;
+}
 
 export default function Base64EncoderPage() {
   const [plainText, setPlainText] = React.useState("");
   const [base64Text, setBase64Text] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
+
+  useShareableState<ShareState>((state) => handlePlainTextChange(state.plainText));
 
   function handlePlainTextChange(value: string) {
     setPlainText(value);
@@ -47,8 +55,14 @@ export default function Base64EncoderPage() {
         setError(null);
       }}
       onCopy={() => navigator.clipboard.writeText(base64Text)}
+      shareState={{ plainText } satisfies ShareState}
+      sendValue={base64Text}
     >
       <div className="flex flex-1 flex-col gap-4">
+        <IncomingTransferBanner
+          toolId="base64-encoder"
+          onApply={handlePlainTextChange}
+        />
         {error && (
           <Alert variant="destructive">
             <TriangleAlert />

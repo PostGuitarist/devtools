@@ -7,7 +7,9 @@ import { AlignLeft, Minus, TriangleAlert } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { downloadTextFile } from "@/lib/download-text-file";
 
 // Load Monaco's assets from our own /public/vs instead of the jsdelivr CDN,
@@ -18,10 +20,16 @@ const PLACEHOLDER = `{
   "hello": "world"
 }`;
 
+interface ShareState {
+  code: string;
+}
+
 export default function JsonFormatterPage() {
   const { resolvedTheme } = useTheme();
   const [code, setCode] = React.useState(PLACEHOLDER);
   const [error, setError] = React.useState<string | null>(null);
+
+  useShareableState<ShareState>((state) => setCode(state.code));
 
   function format() {
     try {
@@ -54,6 +62,8 @@ export default function JsonFormatterPage() {
       }}
       onCopy={() => navigator.clipboard.writeText(code)}
       onDownload={() => downloadTextFile("data.json", code)}
+      shareState={{ code } satisfies ShareState}
+      sendValue={code}
       actions={
         <>
           <Button variant="outline" size="sm" onClick={format}>
@@ -68,6 +78,7 @@ export default function JsonFormatterPage() {
       }
     >
       <div className="flex flex-1 flex-col gap-3">
+        <IncomingTransferBanner toolId="json-formatter" onApply={setCode} />
         {error && (
           <Alert variant="destructive">
             <TriangleAlert />

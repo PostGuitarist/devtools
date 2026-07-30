@@ -7,12 +7,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CopyButton } from "@/components/tools/copy-button";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
+
+interface ShareState {
+  plainText: string;
+}
 
 export default function UrlEncoderPage() {
   const [plainText, setPlainText] = React.useState("");
   const [encodedText, setEncodedText] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
+
+  useShareableState<ShareState>((state) => handlePlainTextChange(state.plainText));
 
   function handlePlainTextChange(value: string) {
     setPlainText(value);
@@ -46,8 +54,11 @@ export default function UrlEncoderPage() {
         setError(null);
       }}
       onCopy={() => navigator.clipboard.writeText(encodedText)}
+      shareState={{ plainText } satisfies ShareState}
+      sendValue={encodedText}
     >
       <div className="flex flex-1 flex-col gap-4">
+        <IncomingTransferBanner toolId="url-encoder" onApply={handlePlainTextChange} />
         {error && (
           <Alert variant="destructive">
             <TriangleAlert />

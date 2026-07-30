@@ -7,7 +7,9 @@ import { AlignLeft, Minus, TriangleAlert } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { downloadTextFile } from "@/lib/download-text-file";
 import { formatXml, minifyXml } from "@/lib/xml";
 
@@ -19,10 +21,16 @@ const PLACEHOLDER = `<note>
   <body>Hello!</body>
 </note>`;
 
+interface ShareState {
+  code: string;
+}
+
 export default function XmlFormatterPage() {
   const { resolvedTheme } = useTheme();
   const [code, setCode] = React.useState(PLACEHOLDER);
   const [error, setError] = React.useState<string | null>(null);
+
+  useShareableState<ShareState>((state) => setCode(state.code));
 
   function format() {
     try {
@@ -53,6 +61,8 @@ export default function XmlFormatterPage() {
       }}
       onCopy={() => navigator.clipboard.writeText(code)}
       onDownload={() => downloadTextFile("data.xml", code)}
+      shareState={{ code } satisfies ShareState}
+      sendValue={code}
       actions={
         <>
           <Button variant="outline" size="sm" onClick={format}>
@@ -67,6 +77,7 @@ export default function XmlFormatterPage() {
       }
     >
       <div className="flex flex-1 flex-col gap-3">
+        <IncomingTransferBanner toolId="xml-formatter" onApply={setCode} />
         {error && (
           <Alert variant="destructive">
             <TriangleAlert />

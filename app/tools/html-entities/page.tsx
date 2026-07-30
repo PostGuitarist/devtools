@@ -5,12 +5,20 @@ import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CopyButton } from "@/components/tools/copy-button";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { decodeHtmlEntities, encodeHtmlEntities } from "@/lib/html-entities";
+
+interface ShareState {
+  plainText: string;
+}
 
 export default function HtmlEntitiesPage() {
   const [plainText, setPlainText] = React.useState("");
   const [encodedText, setEncodedText] = React.useState("");
+
+  useShareableState<ShareState>((state) => handlePlainTextChange(state.plainText));
 
   function handlePlainTextChange(value: string) {
     setPlainText(value);
@@ -32,8 +40,11 @@ export default function HtmlEntitiesPage() {
         setEncodedText("");
       }}
       onCopy={() => navigator.clipboard.writeText(encodedText)}
+      shareState={{ plainText } satisfies ShareState}
+      sendValue={encodedText}
     >
-      <div className="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
+      <IncomingTransferBanner toolId="html-entities" onApply={handlePlainTextChange} />
+      <div className="mt-4 grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="plain-text">Plain text</Label>
