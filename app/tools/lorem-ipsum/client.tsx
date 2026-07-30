@@ -16,10 +16,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { downloadTextFile } from "@/lib/download-text-file";
 import { generateParagraphs, generateSentences, generateWords } from "@/lib/lorem-ipsum";
 
 type Mode = "paragraphs" | "sentences" | "words";
+
+interface ShareState {
+  mode: Mode;
+  count: number;
+  startWithClassic: boolean;
+}
 
 const MODE_LIMITS: Record<Mode, { min: number; max: number; default: number }> = {
   paragraphs: { min: 1, max: 10, default: 3 },
@@ -46,6 +53,13 @@ export default function LoremIpsumPage() {
     generate("paragraphs", MODE_LIMITS.paragraphs.default, true)
   );
 
+  useShareableState<ShareState>((state) => {
+    setMode(state.mode);
+    setCount(state.count);
+    setStartWithClassic(state.startWithClassic);
+    setOutput(generate(state.mode, state.count, state.startWithClassic));
+  });
+
   function handleModeChange(value: Mode) {
     setMode(value);
     setCount(MODE_LIMITS[value].default);
@@ -65,6 +79,8 @@ export default function LoremIpsumPage() {
       onClear={() => setOutput("")}
       onCopy={() => navigator.clipboard.writeText(output)}
       onDownload={() => downloadTextFile("lorem-ipsum.txt", output)}
+      shareState={{ mode, count, startWithClassic } satisfies ShareState}
+      sendValue={output}
     >
       <div className="flex flex-1 flex-col gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">

@@ -5,11 +5,19 @@ import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CopyButton } from "@/components/tools/copy-button";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { CASE_STYLES, convertCase } from "@/lib/case-converter";
+
+interface ShareState {
+  input: string;
+}
 
 export default function CaseConverterPage() {
   const [input, setInput] = React.useState("hello world example");
+
+  useShareableState<ShareState>((state) => setInput(state.input));
 
   return (
     <ToolLayout
@@ -17,8 +25,11 @@ export default function CaseConverterPage() {
       title="Case Converter"
       description="Convert text between case styles."
       onClear={() => setInput("")}
+      shareState={{ input } satisfies ShareState}
+      sendValue={convertCase(input, CASE_STYLES[0])}
     >
       <div className="flex flex-1 flex-col gap-6">
+        <IncomingTransferBanner toolId="case-converter" onApply={setInput} />
         <div className="flex flex-col gap-2">
           <Label htmlFor="case-input">Input</Label>
           <Textarea

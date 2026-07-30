@@ -8,7 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { downloadTextFile } from "@/lib/download-text-file";
+
+interface ShareState {
+  quantity: number;
+}
 
 function generateUuids(quantity: number): string[] {
   return Array.from({ length: quantity }, () => crypto.randomUUID());
@@ -17,6 +22,11 @@ function generateUuids(quantity: number): string[] {
 export default function UuidGeneratorPage() {
   const [quantity, setQuantity] = React.useState(5);
   const [uuids, setUuids] = React.useState<string[]>(() => generateUuids(5));
+
+  useShareableState<ShareState>((state) => {
+    setQuantity(state.quantity);
+    setUuids(generateUuids(state.quantity));
+  });
 
   const output = uuids.join("\n");
 
@@ -28,6 +38,8 @@ export default function UuidGeneratorPage() {
       onClear={() => setUuids([])}
       onCopy={() => navigator.clipboard.writeText(output)}
       onDownload={() => downloadTextFile("uuids.txt", output)}
+      shareState={{ quantity } satisfies ShareState}
+      sendValue={output}
     >
       <div className="flex flex-1 flex-col gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
