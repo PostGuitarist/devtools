@@ -7,13 +7,15 @@ machine: there's no backend, no API routes, no database, and no accounts.
 ## Tools
 
 **Formatters** — JSON, XML, SQL, JSON to TypeScript, JSON Validator, JSON to
-CSV, YAML ↔ JSON Converter, CSS Minifier & Beautifier, HTML to Markdown
+CSV, YAML ↔ JSON Converter, CSS Minifier & Beautifier, HTML to Markdown,
+JSON Diff
 
 **Encoders** — Base64, URL, HTML Entities, JWT Decoder, Timestamp Converter,
 Number Base Converter, Chmod Calculator, Binary to Text, Image to Base64
 
 **Generators** — UUID, Lorem Ipsum, Password, Hash (MD5/SHA-1/SHA-256/SHA-512),
-QR Code Generator, SVG to PNG, Cron Expression Generator
+QR Code Generator, SVG to PNG, Cron Expression Generator, Mock Data Generator,
+curl Command Builder
 
 **Colors** — Color Converter, Gradient Generator, Tailwind Colors
 
@@ -34,10 +36,9 @@ Preview
 - **Installable / offline** — the app is a PWA; once you've opened a tool it
   keeps working without a network connection.
 
-Share links and tool chaining are wired into a representative set of tools
-(base64-encoder, url-encoder, html-entities, json-formatter, xml-formatter,
-plus every tool built after that point) as a reference for extending the
-same pattern to the rest of the catalog.
+Share links and tool chaining are wired into every tool in the catalog —
+see `app/tools/base64-encoder/client.tsx` for the reference implementation
+of the pattern.
 
 ## Architecture
 
@@ -57,6 +58,11 @@ same pattern to the rest of the catalog.
   tool's swatch data) is generated from `tailwindcss/theme.css` by
   `bun run generate:tailwind-palette` — re-run it after a Tailwind upgrade
   that changes the default palette.
+- **Accessibility:** `eslint-plugin-jsx-a11y`'s full recommended rule set
+  runs in CI via `bun run lint` (`eslint-config-next` only enables a small
+  hand-picked subset by default). A handful of `vitest-axe` component scans
+  — one Monaco-free tool per category — catch runtime a11y regressions via
+  `bun run test`.
 
 ### Adding a new tool
 
@@ -86,7 +92,12 @@ every pull request and push to `main`.
 
 ## Roadmap
 
-- Extend share links and tool chaining to the remaining tools.
-- Add more tools (mock data generator, JSON diff, curl command builder).
-- Deeper accessibility coverage (contrast audit tooling in CI, not just a
-  point-in-time manual pass).
+- Add more tools — several are already in `lib/tools-registry.ts` with
+  `comingSoon: true` so they show up (grayed out) in the catalog ahead of
+  being built: CSV to JSON, JWT Encoder, Nanoid/ULID Generator, Slugify,
+  HTTP Status Code Lookup, User-Agent Parser, .env Converter, Markdown
+  Table Generator.
+- A full Playwright + `@axe-core/playwright` sweep across every tool route,
+  as a runtime-rendered complement to the current lint rules and
+  component-level `vitest-axe` scans — needs a browser provisioned in the
+  CI runner, which it doesn't have today.
