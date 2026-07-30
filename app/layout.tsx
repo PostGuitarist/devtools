@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppShell } from "@/components/layout/app-shell";
+import { PwaRegister } from "@/components/pwa-register";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,8 +17,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://devtools.zadenconnell.com"),
   title: "DevTools — Developer Utilities",
   description: "A fast, fully client-side toolkit for everyday developer tasks.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({
@@ -39,6 +45,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AppShell>{children}</AppShell>
+          <PwaRegister />
         </ThemeProvider>
       </body>
     </html>
