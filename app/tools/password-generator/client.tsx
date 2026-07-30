@@ -11,6 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { CopyButton } from "@/components/tools/copy-button";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import {
   buildCharset,
   estimateStrength,
@@ -44,6 +45,11 @@ export default function PasswordGeneratorPage() {
     generatePassword(DEFAULT_OPTIONS)
   );
 
+  useShareableState<PasswordOptions>((state) => {
+    setOptions(state);
+    setPassword(generatePassword(state));
+  });
+
   const charsetSize = buildCharset(options).length;
   const strength = estimateStrength(options.length, charsetSize);
   const strengthMeta = STRENGTH_META[strength];
@@ -68,6 +74,8 @@ export default function PasswordGeneratorPage() {
       title="Password Generator"
       description="Generate strong, random passwords."
       onCopy={() => navigator.clipboard.writeText(password)}
+      shareState={options}
+      sendValue={password}
     >
       <div className="flex flex-1 flex-col gap-8">
         <div className="flex flex-col gap-2">

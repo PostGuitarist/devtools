@@ -6,14 +6,30 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CopyButton } from "@/components/tools/copy-button";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { cn } from "@/lib/utils";
 import { tailwindPalette, type TailwindSwatch } from "@/lib/tailwind-palette-data";
+
+interface ShareState {
+  family: string;
+  shade: number;
+}
+
+function findSwatch(family: string, shade: number) {
+  const match = tailwindPalette.find((f) => f.name === family);
+  return match?.swatches.find((s) => s.shade === shade);
+}
 
 export default function TailwindColorsClient() {
   const [query, setQuery] = React.useState("");
   const [selected, setSelected] = React.useState<{ family: string; swatch: TailwindSwatch }>(
     () => ({ family: tailwindPalette[0].name, swatch: tailwindPalette[0].swatches[5] })
   );
+
+  useShareableState<ShareState>((state) => {
+    const swatch = findSwatch(state.family, state.shade);
+    if (swatch) setSelected({ family: state.family, swatch });
+  });
 
   const families = tailwindPalette.filter((family) =>
     family.name.toLowerCase().includes(query.trim().toLowerCase())
@@ -26,6 +42,8 @@ export default function TailwindColorsClient() {
       toolId="tailwind-colors"
       title="Tailwind Colors"
       description="Full Tailwind CSS palette with live component previews. Pick, preview, copy."
+      shareState={{ family: selected.family, shade: selected.swatch.shade } satisfies ShareState}
+      sendValue={selected.swatch.hex}
     >
       <div className="flex flex-1 flex-col gap-6">
         <div className="flex flex-col gap-2">

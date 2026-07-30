@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { CopyButton } from "@/components/tools/copy-button";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { buildGradientCss, type GradientStop, type GradientType } from "@/lib/gradient";
 
 const MAX_STOPS = 5;
@@ -25,11 +26,24 @@ const DEFAULT_STOPS: GradientStop[] = [
   { id: "2", color: "#f59e0b" },
 ];
 
+interface ShareState {
+  type: GradientType;
+  angle: number;
+  stops: GradientStop[];
+}
+
 export default function GradientGeneratorPage() {
   const [type, setType] = React.useState<GradientType>("linear");
   const [angle, setAngle] = React.useState(90);
   const [stops, setStops] = React.useState<GradientStop[]>(DEFAULT_STOPS);
   const nextId = React.useRef(3);
+
+  useShareableState<ShareState>((state) => {
+    setType(state.type);
+    setAngle(state.angle);
+    setStops(state.stops);
+    nextId.current = state.stops.length + 1;
+  });
 
   const css = buildGradientCss(type, angle, stops);
   const declaration = `background: ${css};`;
@@ -59,6 +73,8 @@ export default function GradientGeneratorPage() {
         setStops(DEFAULT_STOPS);
       }}
       onCopy={() => navigator.clipboard.writeText(declaration)}
+      shareState={{ type, angle, stops } satisfies ShareState}
+      sendValue={declaration}
     >
       <div className="flex flex-1 flex-col gap-6">
         <div

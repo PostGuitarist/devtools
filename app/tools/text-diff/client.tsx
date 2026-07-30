@@ -5,12 +5,24 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { computeLineDiff, formatDiffAsText } from "@/lib/text-diff";
+
+interface ShareState {
+  original: string;
+  changed: string;
+}
 
 export default function TextDiffPage() {
   const [original, setOriginal] = React.useState("");
   const [changed, setChanged] = React.useState("");
+
+  useShareableState<ShareState>((state) => {
+    setOriginal(state.original);
+    setChanged(state.changed);
+  });
 
   const diffLines = React.useMemo(
     () => computeLineDiff(original, changed),
@@ -31,8 +43,11 @@ export default function TextDiffPage() {
         setChanged("");
       }}
       onCopy={() => navigator.clipboard.writeText(formatDiffAsText(diffLines))}
+      shareState={{ original, changed } satisfies ShareState}
+      sendValue={formatDiffAsText(diffLines)}
     >
       <div className="flex flex-1 flex-col gap-4">
+        <IncomingTransferBanner toolId="text-diff" onApply={setChanged} />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="original">Original</Label>

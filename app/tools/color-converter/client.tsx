@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CopyButton } from "@/components/tools/copy-button";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import {
   formatHsl,
   formatRgb,
@@ -19,8 +21,15 @@ import {
 
 const DEFAULT_INPUT = "#6366f1";
 
+interface ShareState {
+  input: string;
+}
+
 export default function ColorConverterPage() {
   const [input, setInput] = React.useState(DEFAULT_INPUT);
+
+  useShareableState<ShareState>((state) => setInput(state.input));
+
   const rgb = React.useMemo<Rgb | null>(() => parseColor(input), [input]);
 
   const hex = rgb ? rgbToHex(rgb) : null;
@@ -35,8 +44,11 @@ export default function ColorConverterPage() {
       description="Convert between HEX, RGB, and HSL color formats."
       onClear={() => setInput("")}
       onCopy={() => hex && navigator.clipboard.writeText(hex)}
+      shareState={{ input } satisfies ShareState}
+      sendValue={hex ?? ""}
     >
       <div className="flex flex-1 flex-col gap-6">
+        <IncomingTransferBanner toolId="color-converter" onApply={setInput} />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div
             className="border-border size-16 shrink-0 rounded-lg border"

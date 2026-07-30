@@ -15,7 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { IncomingTransferBanner } from "@/components/tools/incoming-transfer-banner";
 import { ToolLayout } from "@/components/tool-layout";
+import { useShareableState } from "@/hooks/use-shareable-state";
 import { downloadTextFile } from "@/lib/download-text-file";
 
 loader.config({ paths: { vs: "/vs" } });
@@ -32,11 +34,21 @@ const DIALECTS: { value: SqlLanguage; label: string }[] = [
 
 const PLACEHOLDER = `select u.id, u.name, count(o.id) as order_count from users u left join orders o on o.user_id = u.id where u.active = true group by u.id, u.name order by order_count desc limit 10;`;
 
+interface ShareState {
+  code: string;
+  dialect: SqlLanguage;
+}
+
 export default function SqlFormatterPage() {
   const { resolvedTheme } = useTheme();
   const [code, setCode] = React.useState(PLACEHOLDER);
   const [dialect, setDialect] = React.useState<SqlLanguage>("sql");
   const [error, setError] = React.useState<string | null>(null);
+
+  useShareableState<ShareState>((state) => {
+    setCode(state.code);
+    setDialect(state.dialect);
+  });
 
   function format() {
     try {
@@ -58,6 +70,8 @@ export default function SqlFormatterPage() {
       }}
       onCopy={() => navigator.clipboard.writeText(code)}
       onDownload={() => downloadTextFile("query.sql", code)}
+      shareState={{ code, dialect } satisfies ShareState}
+      sendValue={code}
       actions={
         <>
           <Select
@@ -83,6 +97,7 @@ export default function SqlFormatterPage() {
       }
     >
       <div className="flex flex-1 flex-col gap-3">
+        <IncomingTransferBanner toolId="sql-formatter" onApply={setCode} />
         {error && (
           <Alert variant="destructive">
             <TriangleAlert />
