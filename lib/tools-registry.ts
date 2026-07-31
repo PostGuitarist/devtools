@@ -435,7 +435,6 @@ export const tools: Tool[] = [
     href: "/tools/curl-command-builder",
     keywords: ["curl", "http", "request", "api", "command"],
   },
-  // Backlog: catalog candidates surfaced as "Coming soon" ahead of being built.
   {
     id: "csv-to-json",
     name: "CSV to JSON",
@@ -444,7 +443,6 @@ export const tools: Tool[] = [
     category: "formatters",
     href: "/tools/csv-to-json",
     keywords: ["csv", "json", "convert", "import"],
-    comingSoon: true,
   },
   {
     id: "jwt-encoder",
@@ -454,7 +452,6 @@ export const tools: Tool[] = [
     category: "encoders",
     href: "/tools/jwt-encoder",
     keywords: ["jwt", "json web token", "encode", "sign", "hmac"],
-    comingSoon: true,
   },
   {
     id: "nanoid-generator",
@@ -464,7 +461,6 @@ export const tools: Tool[] = [
     category: "generators",
     href: "/tools/nanoid-generator",
     keywords: ["nanoid", "ulid", "id", "generate"],
-    comingSoon: true,
   },
   {
     id: "slugify",
@@ -474,7 +470,6 @@ export const tools: Tool[] = [
     category: "text",
     href: "/tools/slugify",
     keywords: ["slug", "slugify", "url", "kebab-case"],
-    comingSoon: true,
   },
   {
     id: "http-status-lookup",
@@ -484,7 +479,6 @@ export const tools: Tool[] = [
     category: "encoders",
     href: "/tools/http-status-lookup",
     keywords: ["http", "status", "code", "lookup"],
-    comingSoon: true,
   },
   {
     id: "user-agent-parser",
@@ -494,7 +488,6 @@ export const tools: Tool[] = [
     category: "encoders",
     href: "/tools/user-agent-parser",
     keywords: ["user agent", "browser", "os", "device", "parse"],
-    comingSoon: true,
   },
   {
     id: "env-converter",
@@ -504,7 +497,6 @@ export const tools: Tool[] = [
     category: "formatters",
     href: "/tools/env-converter",
     keywords: ["env", "dotenv", "json", "yaml", "environment variables"],
-    comingSoon: true,
   },
   {
     id: "markdown-table-generator",
@@ -514,7 +506,6 @@ export const tools: Tool[] = [
     category: "generators",
     href: "/tools/markdown-table-generator",
     keywords: ["markdown", "table", "generate"],
-    comingSoon: true,
   },
 ];
 

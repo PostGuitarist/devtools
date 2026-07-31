@@ -85,6 +85,97 @@ const HMAC_ALGORITHMS: Record<string, string> = {
   HS512: "SHA-512",
 };
 
+export const HMAC_ALGORITHM_NAMES = ["HS256", "HS384", "HS512"] as const;
+
+export type HmacAlgorithm = (typeof HMAC_ALGORITHM_NAMES)[number];
+
+function parseJsonObject(text: string, label: string): Record<string, unknown> {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    throw new Error(`The ${label} is not valid JSON.`);
+  }
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`The ${label} must be a JSON object.`);
+  }
+  return value as Record<string, unknown>;
+}
+
+function base64UrlEncodeText(text: string): string {
+  return base64UrlEncode(new TextEncoder().encode(text));
+}
+
+/**
+ * Signs a token with an HMAC secret. The header and payload are re-serialized
+ * compactly, so whitespace in the editors never changes the resulting token.
+ */
+export async function signJwt(
+  headerText: string,
+  payloadText: string,
+  secret: string
+): Promise<string> {
+  const header = parseJsonObject(headerText, "header");
+  const payload = parseJsonObject(payloadText, "payload");
+
+  const alg = typeof header.alg === "string" ? header.alg : "";
+  const hash = HMAC_ALGORITHMS[alg];
+  if (!hash) {
+    throw new Error(
+      `Unsupported "alg": ${alg || "(missing)"}. This tool signs HS256, HS384, and HS512 tokens.`
+    );
+  }
+  if (secret === "") {
+    throw new Error("A signing secret is required.");
+  }
+
+  const signingInput = `${base64UrlEncodeText(JSON.stringify(header))}.${base64UrlEncodeText(
+    JSON.stringify(payload)
+  )}`;
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(signingInput));
+
+  return `${signingInput}.${base64UrlEncode(new Uint8Array(signature))}`;
+}
+
+/** Sets (or removes, when value is undefined) a claim in a JSON payload string. */
+export function setPayloadClaim(
+  payloadText: string,
+  key: string,
+  value: unknown
+): string {
+  const payload = parseJsonObject(payloadText, "payload");
+  if (value === undefined) {
+    delete payload[key];
+  } else {
+    payload[key] = value;
+  }
+  return JSON.stringify(payload, null, 2);
+}
+
+/** Rewrites a header's "alg" while leaving any other header claims intact. */
+export function setHeaderAlgorithm(headerText: string, algorithm: HmacAlgorithm): string {
+  const header = parseJsonObject(headerText, "header");
+  return JSON.stringify({ ...header, alg: algorithm }, null, 2);
+}
+
+export function readHeaderAlgorithm(headerText: string): HmacAlgorithm | null {
+  try {
+    const header = parseJsonObject(headerText, "header");
+    const alg = header.alg;
+    return HMAC_ALGORITHM_NAMES.includes(alg as HmacAlgorithm) ? (alg as HmacAlgorithm) : null;
+  } catch {
+    return null;
+  }
+}
+
 export type HmacVerifyResult = "valid" | "invalid" | "unsupported-algorithm" | "malformed";
 
 /**
