@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { base64UrlEncode, decodeJwt, getClaimStatus, verifyHmacSignature } from "./jwt";
+import {
+  base64UrlEncode,
+  decodeJwt,
+  getClaimStatus,
+  readHeaderAlgorithm,
+  setHeaderAlgorithm,
+  setPayloadClaim,
+  signJwt,
+  verifyHmacSignature,
+} from "./jwt";
 
 // A well-known public jwt.io example token, signed with the well-known
 // example secret "your-256-bit-secret".
@@ -99,5 +108,95 @@ describe("verifyHmacSignature", () => {
 
   it("returns malformed for a token without three parts", async () => {
     expect(await verifyHmacSignature("not-a-jwt", "secret")).toBe("malformed");
+  });
+});
+
+describe("signJwt", () => {
+  it("reproduces the well-known example token", async () => {
+    const token = await signJwt(
+      JSON.stringify({ alg: "HS256", typ: "JWT" }),
+      JSON.stringify({ sub: "1234567890", name: "John Doe", iat: 1516239022 }),
+      EXAMPLE_SECRET
+    );
+    expect(token).toBe(EXAMPLE_TOKEN);
+  });
+
+  it("ignores whitespace in the header and payload JSON", async () => {
+    const token = await signJwt(
+      '{\n  "alg": "HS256",\n  "typ": "JWT"\n}',
+      '{\n  "sub": "1234567890",\n  "name": "John Doe",\n  "iat": 1516239022\n}',
+      EXAMPLE_SECRET
+    );
+    expect(token).toBe(EXAMPLE_TOKEN);
+  });
+
+  it("produces tokens that verify with the same secret", async () => {
+    for (const alg of ["HS256", "HS384", "HS512"]) {
+      const token = await signJwt(JSON.stringify({ alg, typ: "JWT" }), '{"sub":"a"}', "secret");
+      expect(await verifyHmacSignature(token, "secret"), alg).toBe("valid");
+      expect(await verifyHmacSignature(token, "other"), alg).toBe("invalid");
+    }
+  });
+
+  it("round-trips through decodeJwt", async () => {
+    const payload = { sub: "ada", roles: ["admin"], iat: 1516239022 };
+    const token = await signJwt('{"alg":"HS512","typ":"JWT"}', JSON.stringify(payload), "s3cret");
+    expect(decodeJwt(token).payload).toEqual(payload);
+  });
+
+  it("rejects an unsupported algorithm", async () => {
+    await expect(signJwt('{"alg":"RS256"}', "{}", "secret")).rejects.toThrow(/unsupported/i);
+  });
+
+  it("rejects an empty secret", async () => {
+    await expect(signJwt('{"alg":"HS256"}', "{}", "")).rejects.toThrow(/secret/i);
+  });
+
+  it("rejects invalid or non-object JSON", async () => {
+    await expect(signJwt("{oops}", "{}", "secret")).rejects.toThrow(/header is not valid JSON/i);
+    await expect(signJwt('{"alg":"HS256"}', "[]", "secret")).rejects.toThrow(
+      /payload must be a JSON object/i
+    );
+  });
+});
+
+describe("setPayloadClaim", () => {
+  it("adds a claim", () => {
+    expect(JSON.parse(setPayloadClaim('{"sub":"a"}', "iat", 1516239022))).toEqual({
+      sub: "a",
+      iat: 1516239022,
+    });
+  });
+
+  it("overwrites an existing claim", () => {
+    expect(JSON.parse(setPayloadClaim('{"exp":1}', "exp", 2))).toEqual({ exp: 2 });
+  });
+
+  it("removes a claim when the value is undefined", () => {
+    expect(JSON.parse(setPayloadClaim('{"sub":"a","exp":1}', "exp", undefined))).toEqual({
+      sub: "a",
+    });
+  });
+
+  it("throws for an invalid payload", () => {
+    expect(() => setPayloadClaim("nope", "exp", 1)).toThrow(/payload/i);
+  });
+});
+
+describe("setHeaderAlgorithm / readHeaderAlgorithm", () => {
+  it("swaps alg while keeping other header claims", () => {
+    expect(JSON.parse(setHeaderAlgorithm('{"alg":"HS256","kid":"k1"}', "HS512"))).toEqual({
+      alg: "HS512",
+      kid: "k1",
+    });
+  });
+
+  it("reads a supported algorithm back", () => {
+    expect(readHeaderAlgorithm('{"alg":"HS384"}')).toBe("HS384");
+  });
+
+  it("returns null for unsupported or unreadable headers", () => {
+    expect(readHeaderAlgorithm('{"alg":"RS256"}')).toBeNull();
+    expect(readHeaderAlgorithm("{broken")).toBeNull();
   });
 });
